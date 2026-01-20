@@ -2,17 +2,29 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
+const { validateSignUpData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
-
   try {
+    validateSignUpData(req);
+
+    const { firstName, lastName, emailId, password } = req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+    console.log(passwordHash);
+
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+    });
     await user.save();
     res.send("User Added Successfully!!");
   } catch (err) {
-    res.status(400).send("Error saving the user:" + err.message);
+    res.status(400).send("ERROR : " + err.message);
   }
 });
 
@@ -60,13 +72,7 @@ app.patch("/user/:userId", async (req, res) => {
   const userId = req.params?.userId;
   const data = req.body;
 
-  const ALLOWED_UPDATES = [
-    "photoUrl",
-    "about",
-    "gender",
-    "age",
-    "skills",
-  ];
+  const ALLOWED_UPDATES = ["photoUrl", "about", "gender", "age", "skills"];
 
   const isUpdateAllowed = Object.keys(data).every((k) =>
     ALLOWED_UPDATES.includes(k)
@@ -91,10 +97,10 @@ app.patch("/user/:userId", async (req, res) => {
     if (!isUpdateAllowed) {
       throw new Error("Update not allowed");
     }
-    if(data?.skills.length > 7){
+    if (data?.skills.length > 7) {
       throw new Error("Skills cannot be more than 7");
     }
-    
+
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "after",
       runValidators: true,

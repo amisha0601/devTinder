@@ -63,6 +63,6 @@ authRouter.post("/logout", async(req,res) => {
       expires: new Date(Date.now()),
     });
     res.send("Logged Out Successfully!!");
-}); 
+});
 
 module.exports = authRouter;

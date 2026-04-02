@@ -17,6 +17,7 @@
     "dev": "node src/app.js"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.1020.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",

@@ -5,6 +5,8 @@ const userAuth = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
+const sendEmail = require("../utils/sendEmail");
+
 requestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
@@ -49,12 +51,23 @@ requestRouter.post(
 
       const data = await connectionRequest.save();
 
+      console.log("TO:", toUser.email);
+      console.log("FROM:", req.user.email);
+
+      const emailRes = await sendEmail.run(
+        toUser.email,
+        req.user.email
+      );
+
+      console.log("EMAIL RESPONSE:", emailRes);
+
       res.json({
         message: `${req.user.firstName} ${status} ${toUser.firstName}`,
         data,
       });
 
     } catch (err) {
+      console.log("ERROR:", err);
       res.status(400).send("ERROR: " + err.message);
     }
   }
@@ -101,6 +114,7 @@ requestRouter.post(
       });
 
     } catch (err) {
+      console.log("ERROR:", err);
       res.status(400).send("ERROR: " + err.message);
     }
   }

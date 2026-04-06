@@ -51,15 +51,12 @@ requestRouter.post(
 
       const data = await connectionRequest.save();
 
-      console.log("TO:", toUser.email);
-      console.log("FROM:", req.user.email);
-
       const emailRes = await sendEmail.run(
-        toUser.email,
-        req.user.email
-      );
+      "A new friend request from " + req.user.firstName,
+      req.user.firstName + " is " + status + " in " + toUser.firstName
+      );  
 
-      console.log("EMAIL RESPONSE:", emailRes);
+console.log("EMAIL RESPONSE:", emailRes);
 
       res.json({
         message: `${req.user.firstName} ${status} ${toUser.firstName}`,

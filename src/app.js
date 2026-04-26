@@ -47,4 +47,4 @@ connectDB()
   })
   .catch((err) => {
     console.error("Database error:", err.message);
-  });
+  }); 

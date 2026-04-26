@@ -4,7 +4,7 @@ const userAuth = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
-const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
+const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills isVerifiedDev";
 
 //Get all the pending connection requests for the loggedIn user
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
@@ -76,6 +76,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       ],
     })
       .select(USER_SAFE_DATA)
+      .sort({ isVerifiedDev: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit);
 

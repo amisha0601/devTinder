@@ -34,4 +34,27 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
+profileRouter.patch("/profile/verify", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    
+    const techKeywords = ["react", "node", "js", "java", "python", "css", "html", "sql", "aws", "devops"];
+
+    const hasTechSkill = user.skills.some(skill => 
+      techKeywords.some(keyword => skill.toLowerCase().includes(keyword))
+    );
+
+    if (user.skills.length < 3 || !hasTechSkill) {
+      throw new Error("Add at least 3 skills, including at least one core tech skill (e.g. React, Node, etc.)");
+    }
+
+    user.isVerifiedDev = true;
+    await user.save();
+
+    res.json({ message: "Verified!", data: user });
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+});
+
 module.exports = profileRouter;

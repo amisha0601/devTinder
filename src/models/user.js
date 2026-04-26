@@ -75,6 +75,14 @@ const userSchema = new mongoose.Schema(
     skills: {
       type: [String],
     },
+    isVerifiedDev: {
+  type: Boolean,
+  default: false, 
+},
+headline: {
+  type: String,
+  default: "Tech Enthusiast", 
+},
   },
   {
     timestamps: true,

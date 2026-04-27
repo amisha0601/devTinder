@@ -1,4 +1,4 @@
- const socket = require("socket.io");
+const socket = require("socket.io");
 const crypto = require("crypto");
 const { Chat } = require("../models/chat");
 const ConnectionRequest = require("../models/connectionRequest");
@@ -27,12 +27,27 @@ const initializeSocket = (server) => {
     socket.on(
       "sendMessage",
       async ({ firstName, lastName, userId, targetUserId, text }) => {
-        // Save messages to the database
         try {
-          const roomId = getSecretRoomId(userId, targetUserId);
-          console.log(firstName + " " + text);
+          const connection = await ConnectionRequest.findOne({
+            $or: [
+              {
+                fromUserId: userId,
+                toUserId: targetUserId,
+                status: "accepted",
+              },
+              {
+                fromUserId: targetUserId,
+                toUserId: userId,
+                status: "accepted",
+              },
+            ],
+          });
 
-          // TODO: Check if userId & targetUserId are friends
+          if (!connection) {
+            return console.log("Rejected: Users are not connected.");
+          }
+
+          const roomId = getSecretRoomId(userId, targetUserId);
 
           let chat = await Chat.findOne({
             participants: { $all: [userId, targetUserId] },
@@ -55,7 +70,7 @@ const initializeSocket = (server) => {
         } catch (err) {
           console.log(err);
         }
-      }
+      },
     );
 
     socket.on("disconnect", () => {});

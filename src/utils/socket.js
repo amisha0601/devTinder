@@ -10,6 +10,8 @@ const getSecretRoomId = (userId, targetUserId) => {
     .digest("hex");
 };
 
+let onlineUsers = {};
+
 const initializeSocket = (server) => {
   const io = socket(server, {
     cors: {
@@ -18,6 +20,13 @@ const initializeSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
+
+    socket.on("userOnline", (userId) => {
+      onlineUsers[userId] = socket.id;
+      io.emit("updateOnlineUsers", Object.keys(onlineUsers));
+      console.log("User Checked In:", userId);
+    });
+     
     socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
       const roomId = getSecretRoomId(userId, targetUserId);
       console.log(firstName + " joined Room : " + roomId);
@@ -73,7 +82,16 @@ const initializeSocket = (server) => {
       },
     );
 
-    socket.on("disconnect", () => {});
+    socket.on("disconnect", () => {
+      for (let userId in onlineUsers) {
+        if (onlineUsers[userId] === socket.id) {
+          delete onlineUsers[userId];
+          console.log("User Checked Out:", userId);
+          break;
+        }
+      }
+      io.emit("updateOnlineUsers", Object.keys(onlineUsers));
+    });
   });
 };
 

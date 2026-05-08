@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { fakerEN_IN: faker } = require("@faker-js/faker"); 
 const User = require("./src/models/user"); 
-const bcrypt = require("bcrypt"); // Added bcrypt to hash passwords
+const bcrypt = require("bcrypt"); 
 require("dotenv").config();
 
 const seedDB = async () => {
@@ -37,11 +37,11 @@ const seedDB = async () => {
         photoUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${fName}${i}&backgroundColor=b6e3f4,c0aede,d1d4f9`, 
         about: `${faker.helpers.arrayElement(headlines)} based in India. ${faker.person.bio()}`,
         skills: faker.helpers.arrayElements(techSkills, { min: 4, max: 7 }),
-        isVerifiedDev: i < 10 ? true : false, 
+        isVerifiedDev: i < 10 ? true : false,
       });
     }
 
-    await User.collection.insertMany(users); 
+    await User.collection.insertMany(users);
     console.log("Credentials for test accounts: dev0@gmail.com to dev9@gmail.com with password 'Password@123'");
     
     mongoose.connection.close();

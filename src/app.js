@@ -34,15 +34,24 @@ app.use("/", userRouter);
 app.use("/", paymentRouter);
 app.use("/", chatRouter);
 
+const PORT = process.env.PORT || 8080;
+
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
 const server = http.createServer(app);
 initializeSocket(server);
-
 
 connectDB()
   .then(() => {
     console.log("Database connection established...");
-    server.listen(process.env.PORT, () => {
-      console.log("Server is successfully running on port 8080...");
+    server.listen(PORT, () => {
+      console.log(`Server is successfully running on port ${PORT}...`);
     });
   })
   .catch((err) => {

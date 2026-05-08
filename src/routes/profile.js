@@ -38,14 +38,17 @@ profileRouter.patch("/profile/verify", userAuth, async (req, res) => {
   try {
     const user = req.user;
     
+    const skills = Array.isArray(user.skills) ? user.skills : [];
     const techKeywords = ["react", "node", "js", "java", "python", "css", "html", "sql", "aws", "devops"];
 
-    const hasTechSkill = user.skills.some(skill => 
-      techKeywords.some(keyword => skill.toLowerCase().includes(keyword))
+    const hasTechSkill = skills.some((skill) =>
+      techKeywords.some((keyword) => skill.toLowerCase().includes(keyword)),
     );
 
-    if (user.skills.length < 3 || !hasTechSkill) {
-      throw new Error("Add at least 3 skills, including at least one core tech skill (e.g. React, Node, etc.)");
+    if (skills.length < 3 || !hasTechSkill) {
+      throw new Error(
+        "Add at least 3 skills, including at least one core tech skill (e.g. React, Node, etc.)",
+      );
     }
 
     user.isVerifiedDev = true;

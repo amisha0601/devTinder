@@ -41,24 +41,19 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
+      lowercase: true,
       enum: {
         values: ["male", "female", "other"],
         message: `{VALUE} is not a valid gender type`,
       },
-     
-      // validate(value) {
-      //   if (!["male", "female", "others"].includes(value)) {
-      //     throw new Error("Gender data is not valid");
-      //   }
-      // },
     },
-     isPremium: {
-        type: Boolean,
-        default: false,
-      },
-      membershipType: {
-        type: String
-      },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    membershipType: {
+      type: String,
+    },
     photoUrl: {
       type: String,
       default: "https://geographyandyou.com/images/user-profile.png",
@@ -76,13 +71,13 @@ const userSchema = new mongoose.Schema(
       type: [String],
     },
     isVerifiedDev: {
-  type: Boolean,
-  default: false, 
-},
-headline: {
-  type: String,
-  default: "Tech Enthusiast", 
-},
+      type: Boolean,
+      default: false,
+    },
+    headline: {
+      type: String,
+      default: "Tech Enthusiast",
+    },
   },
   {
     timestamps: true,
